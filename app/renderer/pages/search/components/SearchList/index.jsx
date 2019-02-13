@@ -1,5 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import Svg from 'react-svg-inline';
+import EmptyIcon from 'assets/icon/icon-edit.svg';
+import i18n from 'constants/i18n';
 import SearchItem from '../SearchItem';
 import './SearchList.scss';
 
@@ -8,7 +11,9 @@ const propTypes = {
   list: PropTypes.arrayOf(PropTypes.object), // eslint-disable-line no-unused-prop-types
   selectedIndex: PropTypes.number,
   onCloseWidget: PropTypes.func,
+  onMakeWidget: PropTypes.func,
   onHideWindow: PropTypes.func,
+  onModalOpen: PropTypes.func,
   onSelectIncrease: PropTypes.func,
   onSelectDecrease: PropTypes.func,
   onShowWidget: PropTypes.func,
@@ -21,6 +26,8 @@ const defaultProps = {
   keyword: '',
   onCloseWidget() {},
   onHideWindow() {},
+  onMakeWidget() {},
+  onModalOpen() {},
   onSelectIncrease() {},
   onSelectDecrease() {},
   onShowWidget() {},
@@ -98,11 +105,14 @@ class SearchList extends React.Component {
   }
 
   render() {
+    const text = i18n().search;
     const {
       keyword,
       list,
       selectedIndex,
       onCloseWidget,
+      onMakeWidget,
+      onModalOpen,
       onShowWidget,
       onUpdateInfo,
     } = this.props;
@@ -116,10 +126,30 @@ class SearchList extends React.Component {
             keyword={keyword}
             item={item}
             onCloseWidget={onCloseWidget}
+            onModalOpen={onModalOpen}
             onShowWidget={onShowWidget}
             onUpdateInfo={onUpdateInfo}
           />
         ))}
+        {(list.length === 0 && keyword) && (
+          <>
+            <Svg svg={EmptyIcon} />
+            {text.noSearch}
+          </>
+        )}
+        {(list.length === 0 && !keyword) && (
+          <>
+            <Svg svg={EmptyIcon} />
+            {text.empty}
+            <button
+              className="Btn Btn--primary"
+              type="button"
+              onClick={() => onMakeWidget()}
+            >
+              {text.newWidget}
+            </button>
+          </>
+        )}
       </ul>
     );
   }
